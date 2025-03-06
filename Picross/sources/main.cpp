@@ -3,9 +3,6 @@
 
 #include "PuzzleGrid.h"
 
-#define SCREEN_WIDTH (1600)
-#define SCREEN_HEIGHT (900)
-
 #define WINDOW_TITLE "Picross"
 
 int main(void)
@@ -22,14 +19,20 @@ int main(void)
     const int IMAGE_SIZE = 300;
     
     Image image = LoadImage(ASSETS_PATH"test.jpg");
-    ImageResize(&image, IMAGE_SIZE, IMAGE_SIZE);
     Texture2D baseTexture = LoadTextureFromImage(image);
 
     FullTexture fullTexture(image, GRID_SIZE, COLOR_AMOUNT);
 
     GuiLoadStyle(ASSETS_PATH"style_bluish.rgs");
-    
-    PuzzleGrid puzzleGrid(fullTexture, GRID_SIZE);
+    ImageResize(&image, IMAGE_SIZE, IMAGE_SIZE);
+
+    Rectangle gridRect;
+    gridRect.x = (SCREEN_WIDTH / 2 - (image.width * PADDING) / 2);
+    gridRect.y = (SCREEN_HEIGHT / 2 - (image.height * PADDING) / 2);
+    gridRect.width = image.width * PADDING;
+    gridRect.height = image.height * PADDING;
+
+    PuzzleGrid puzzleGrid(fullTexture, GRID_SIZE, gridRect, PADDING);
 
     while (!WindowShouldClose())
     {
@@ -37,53 +40,27 @@ int main(void)
         ClearBackground(RAYWHITE);
 
         // Draw background rectangle
-        const int rectX = (SCREEN_WIDTH / 2) - ((baseTexture.width * PADDING) / 2) - NUM_BAR_SIZE;
-        const int rectY = (SCREEN_HEIGHT / 2) - ((baseTexture.height * PADDING) / 2) - NUM_BAR_SIZE;
-        DrawRectangle(rectX, rectY, baseTexture.width * PADDING + NUM_BAR_SIZE, baseTexture.height * PADDING + NUM_BAR_SIZE, GRAY);
-
-        for (int i = 0; i < GRID_SIZE; i++)
-        {
-            // Draw row num bars
-            float numRectSizeLength = baseTexture.width / GRID_SIZE;
-            float numRectSizeWidth = NUM_BAR_SIZE;
-            int numRectX = (SCREEN_WIDTH / 2 - (image.width * PADDING) / 2) - (numRectSizeWidth);
-            int numRectY = (SCREEN_HEIGHT / 2 - (image.height * PADDING) / 2)  + (numRectSizeLength * i * PADDING);
-            DrawRectangle(numRectX, numRectY, numRectSizeWidth, numRectSizeLength, LIGHTGRAY);
-
-            puzzleGrid.drawRowColorMap(numRectX, numRectY, numRectSizeLength, numRectSizeWidth, i * 2);
-
-            for (int j = 0; j < GRID_SIZE; j++)
-            {
-                // Draw col num bars
-                numRectSizeLength = NUM_BAR_SIZE;
-                numRectSizeWidth = baseTexture.width / (GRID_SIZE);
-                numRectX = (SCREEN_WIDTH / 2 - (image.width * PADDING) / 2) + (numRectSizeWidth * j * PADDING);
-                numRectY = (SCREEN_HEIGHT / 2 - (image.height * PADDING) / 2) - (numRectSizeLength);
-                DrawRectangle(numRectX, numRectY, numRectSizeWidth, numRectSizeLength, LIGHTGRAY);
-
-                puzzleGrid.drawColColorMap(numRectX, numRectY, numRectSizeLength, numRectSizeWidth, j * 2 + 1);
-
-                int loc = (i * GRID_SIZE) + j;
-                Texture2D texture = fullTexture.getTextureTileAt(loc)->getTexture();
-                Color color = fullTexture.getTextureTileAt(loc)->getColor();
-
-                // Draw colored rectangle
-                const int rectX = (j * texture.width * PADDING) + (SCREEN_WIDTH / 2 - (image.width * PADDING) / 2);
-                const int rectY = (i * texture.height * PADDING) + (SCREEN_HEIGHT / 2 - (image.height * PADDING) / 2);
-                DrawRectangle(rectX, rectY, texture.width, texture.height, color);
-            }
-        }
+        const int rectX = (SCREEN_WIDTH / 2) - ((image.width * PADDING) / 2) - NUM_BAR_SIZE;
+        const int rectY = (SCREEN_HEIGHT / 2) - ((image.height * PADDING) / 2) - NUM_BAR_SIZE;
+        DrawRectangle(rectX, rectY, image.width * PADDING + NUM_BAR_SIZE, image.height * PADDING + NUM_BAR_SIZE, GRAY);
+        
+        // Draw puzzle grid
+        puzzleGrid.drawColorMaps(image.width / GRID_SIZE, NUM_BAR_SIZE);
+        puzzleGrid.drawGrid();
 
         // Display colors being used in limited color picture
         int index = 0;
         int width = 40;
         int height = 40;
+
+        const int colorBarX = (SCREEN_WIDTH / 2) - ((fullTexture.getSortedFrequencySize() - 1) * width * PADDING) - 10 * PADDING;
+        const int colorBarY = (SCREEN_HEIGHT - (height + 40));
+        DrawRectangle(colorBarX, colorBarY, fullTexture.getSortedFrequencySize() * width * PADDING + 20, height + 20, GRAY);
         for (int i = 0; i < fullTexture.getSortedFrequencySize(); i++)
         {
-            const int rectX = (index * width);
-            const int rectY = (SCREEN_HEIGHT - height);
+            const int rectX = (SCREEN_WIDTH / 2) - (index * width * PADDING);
+            const int rectY = (SCREEN_HEIGHT - (height + 30));
             DrawRectangle(rectX, rectY, width, height, fullTexture.getColorFromSortedFrequency(i));
-
             index++;
         }
 
