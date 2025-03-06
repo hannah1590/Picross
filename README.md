@@ -11,6 +11,7 @@ The player can start a game by uploading an image, which will turn itself into a
 ##
 
 ### Current State
+![current picross state](https://github.com/user-attachments/assets/7e223ded-14b4-4037-8a25-47e8b02767bc)
 Right now, the base grid calcuations are done. A square image can be uploaded to the assets folder and the program will splice it into a grid and choose the most regularly occuring colors to make into a pixelated image. Additionally, the number of colors for each row and column are stored and displayed on the side of the puzzle
 
 ##
