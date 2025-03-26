@@ -34,6 +34,9 @@ int main(void)
 
     PuzzleGrid puzzleGrid(fullTexture, GRID_SIZE, gridRect, PADDING);
 
+    puzzleGrid.setUpColorSelect(40, 40);
+
+    Color currentColorSelected = RED;
     while (!WindowShouldClose())
     {
         BeginDrawing();
@@ -49,22 +52,24 @@ int main(void)
         puzzleGrid.drawGrid();
 
         // Display colors being used in limited color picture
-        int index = 0;
-        int width = 40;
-        int height = 40;
-
-        const int colorBarX = (SCREEN_WIDTH / 2) - ((fullTexture.getSortedFrequencySize() - 1) * width * PADDING) - 10 * PADDING;
-        const int colorBarY = (SCREEN_HEIGHT - (height + 40));
-        DrawRectangle(colorBarX, colorBarY, fullTexture.getSortedFrequencySize() * width * PADDING + 20, height + 20, GRAY);
-        for (int i = 0; i < fullTexture.getSortedFrequencySize(); i++)
-        {
-            const int rectX = (SCREEN_WIDTH / 2) - (index * width * PADDING);
-            const int rectY = (SCREEN_HEIGHT - (height + 30));
-            DrawRectangle(rectX, rectY, width, height, fullTexture.getColorFromSortedFrequency(i));
-            index++;
-        }
+        puzzleGrid.drawColorSelection();
 
         DrawTexture(baseTexture, 20, 20, WHITE);
+
+        if (IsMouseButtonPressed(0))
+        {
+            Vector2 mousePos;
+            mousePos.x = GetMouseX();
+            mousePos.y = GetMouseY();
+            PuzzleTile* currentTile = puzzleGrid.getTileAtPoint(mousePos);
+            if (currentTile != nullptr)
+            {
+                if (currentTile->isSelector())
+                    currentColorSelected = currentTile->getColor();
+                else
+                    currentTile->setColor(currentColorSelected);
+            }
+        }
 
         EndDrawing();
     }

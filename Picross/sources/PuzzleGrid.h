@@ -19,9 +19,14 @@ public:
 	void setUpColorMaps();
 	void drawColorMaps(int barWidth, int barLength);
 	void drawGrid();
+	void setUpColorSelect(int width, int height);
+	void drawColorSelection();
+
+	PuzzleTile* getTileAtPoint(Vector2 point);
 
 private:
 	std::vector<PuzzleTile*> tiles;
+	std::vector<PuzzleTile*> colorSelect; // all colors in the puzzle displayed at the bottom of the screen
 	std::vector<std::vector<std::pair<int, int>>> colorMaps; // even numbers are rows, odd are columns; first int is color in hex, second is frequency
 	FullTexture* texture;
 
