@@ -21,6 +21,18 @@ public:
 		sortFrequency();
 	}
 
+	~FullTexture()
+	{
+		for (TextureTile* tile : textures)
+		{
+			delete tile;
+			tile = nullptr;
+		}
+		textures.clear();
+		grayFrequency.clear();
+		sortedFrequency.clear();
+	}
+
     void spliceImage();
     void sortFrequency();
 	Color getClosestColorVal(int loc); 	// Find color that most closely matches one of the high frequency values for texture at location

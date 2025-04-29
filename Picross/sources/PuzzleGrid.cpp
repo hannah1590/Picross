@@ -5,6 +5,7 @@ bool operator<(Color const& lhs, Color const& rhs)
 	return (lhs.r < rhs.r) && (lhs.g < rhs.g) && (lhs.b < rhs.b);
 }
 
+
 bool operator!=(Color const& lhs, Color const& rhs)
 {
 	return std::abs(lhs.r - rhs.r) > 10 && std::abs(lhs.g - rhs.g) > 10 && std::abs(lhs.b - rhs.b) > 10;
@@ -27,11 +28,12 @@ void PuzzleGrid::setUpColorMaps()
 		{
 			tileRect.x = (j * tileRect.width * tilePadding) + ((SCREEN_WIDTH / 2) - (gridRect.width / 2));
 			tileRect.y = (i * tileRect.height * tilePadding) + ((SCREEN_HEIGHT / 2) - (gridRect.height / 2));
-			PuzzleTile* tile = new PuzzleTile(tileRect, texture->getTextureTileAt((i * gridSize) + j)->getColor(), (i * gridSize) + j, false);
+			Color color = texture->getTextureTileAt((i * gridSize) + j)->getColor();
+			PuzzleTile* tile = new PuzzleTile(tileRect, color, (i * gridSize) + j, false);
 			tiles.push_back(tile);
 
 			// Setting up row color frequency
-			int currentColor = ColorToInt(texture->getTextureTileAt((i * gridSize) + j)->getColor());
+			int currentColor = ColorToInt(color);
 			if (lastRowColor.first == currentColor)
 			{
 				rowColorMap[lastRowColor.second].second += 1;
@@ -120,6 +122,14 @@ void PuzzleGrid::drawGrid()
 	}
 }
 
+void PuzzleGrid::drawCorrectGrid()
+{
+	for (PuzzleTile* tile : tiles)
+	{
+		tile->drawCorrect();
+	}
+}
+
 void PuzzleGrid::setUpColorSelect(int width, int height)
 {
 	for (int i = 0; i < texture->getSortedFrequencySize(); i++)
@@ -133,10 +143,11 @@ void PuzzleGrid::setUpColorSelect(int width, int height)
 		rect.height = height;
 
 		Color color = texture->getColorFromSortedFrequency(i);
+		/*
 		if (std::abs(color.r - WHITE.r) <= 10 && std::abs(color.g - WHITE.g) <= 10 && std::abs(color.b - WHITE.b) <= 10)
 		{
 			color = RED;
-		}
+		}*/
 
 		PuzzleTile* tile = new PuzzleTile(rect, color, i, true);
 		colorSelect.push_back(tile);

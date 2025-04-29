@@ -6,7 +6,7 @@
 enum TileState {
 	EMPTY,
 	COLORED,
-	CROSSED
+	EITHER
 };
 
 class PuzzleTile
@@ -23,7 +23,7 @@ public:
 		gridPos = 0;
 		
 		currentState = EMPTY;
-		correctState = CROSSED;
+		correctState = EITHER;
 
 		selectorTile = false;
 	}
@@ -35,25 +35,31 @@ public:
 		currentColor = WHITE;
 
 		if (std::abs(tileColor.r - WHITE.r) > 10 && std::abs(tileColor.g - WHITE.g) > 10 && std::abs(tileColor.b - WHITE.b) > 10)
-			correctState = CROSSED;
+			correctState = EITHER;
 		else
 			correctState = COLORED;
 	}
 
 	void drawTile();
+	void drawCorrect();
 
 	bool isColliding(Vector2 pos);
 
-	bool isCorrect() { return currentState == correctState; }
+	bool isCorrect();
 
 	void setState(TileState state) { currentState = state; }
 	TileState getState() { return currentState; }
-	void setColor(Color color);
+	void setColor(Color color, bool pressed, Color firstColor);
 	Color getColor() { return tileColor; }
 	int getGridPos() { return gridPos; }
 	Rectangle getRect() { return rect; }
 
+	Color getCurrentColor() { return currentColor; }
+
 	bool isSelector() { return selectorTile; }
+
+	void setPressed(bool p) { pressed = p; }
+	bool getPressed() { return pressed; }
 private:
 	Rectangle rect;
 	Color tileColor;
@@ -64,4 +70,5 @@ private:
 	TileState correctState;
 
 	bool selectorTile;
+	bool pressed;
 };

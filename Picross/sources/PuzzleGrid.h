@@ -12,13 +12,37 @@ class PuzzleGrid
 public:
 	PuzzleGrid(FullTexture& text, int size, Rectangle rect, float padding) :
 		texture(&text), gridSize(size), gridRect(rect), tilePadding(padding)
-	{ 
+	{
 		setUpColorMaps();
+	}
+
+	~PuzzleGrid()
+	{
+		for (PuzzleTile* tile : tiles)
+		{
+			delete tile;
+			tile = nullptr;
+		}
+		tiles.clear();
+
+		for (PuzzleTile* color : colorSelect)
+		{
+			delete color;
+			color = nullptr;
+		}
+		colorSelect.clear();
+		for (auto& v : colorMaps)
+		{
+			v.clear();
+		}
+		colorMaps.clear();
+		texture = nullptr;
 	}
 
 	void setUpColorMaps();
 	void drawColorMaps(int barWidth, int barLength);
 	void drawGrid();
+	void drawCorrectGrid();
 	void setUpColorSelect(int width, int height);
 	void drawColorSelection();
 

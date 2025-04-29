@@ -56,12 +56,15 @@ void FullTexture::sortFrequency()
     std::sort(sortedFrequency.begin(), sortedFrequency.end(), std::greater<std::pair<int, int>>());
     if (sortedFrequency.size() > maxColor)
         sortedFrequency.resize(maxColor);
+    //else
+       // sortedFrequency.pop_back();
 
     for (int i = 0; i < gridSize; i++)
     {
         for (int j = 0; j < gridSize; j++)
         {
-            textures[(i * gridSize) + j]->setColor(getClosestColorVal((i * gridSize) + j));
+            Color color = getClosestColorVal((i * gridSize) + j);
+            textures[(i * gridSize) + j]->setColor(color);
         }
     }
 }
